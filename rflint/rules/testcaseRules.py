@@ -39,6 +39,23 @@ class TagWithSpaces(TestRule):
             if ((" " in tag) or ("\t" in tag)):
                 self.report(testcase, "space not allowed in tag name: '%s'" % tag, testcase.linenumber)
 
+class TestTagFromList(TestRule):
+    '''Flags absence of at least one tag from a list provided via -c option.
+
+        Example: rflint --configure TestTagFromList:Tag1,Tag2,Tag3'''
+    def __init__(self, controller, severity=ERROR):
+        super().__init__(controller, severity)
+        self.test_tags = None
+
+    def configure(self, test_tags):
+        self.test_tags = test_tags.split(',')
+
+    def apply(self, testcase):
+        if not self.test_tags:
+            return
+        if not any([tag in testcase.tags for tag in self.test_tags]):
+            self.report(testcase, "Tag absent in: '%s'" % testcase, testcase.linenumber)
+
 class RequireTestDocumentation(TestRule):
     '''Verify that a test suite has documentation
 
