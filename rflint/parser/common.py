@@ -65,6 +65,16 @@ class RobotStatements(object):
         if len(current_statement) > 0:
             statements.append(current_statement)
 
+    # this is great, except that we don't return the line number
+    # or character position of each tag. The linter needs that. :-(
+    @property 
+    def tags(self):
+        tags = []
+        for statement in self.statements:
+            if len(statement) > 2 and statement[1].lower() == "[tags]":
+                tags = tags + statement[2:]
+        return tags
+
         return statements
 
 
